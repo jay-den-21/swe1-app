@@ -93,7 +93,7 @@ by Git and EB, and are not automatically loaded by Django.
 ```bash
 eb deploy
 eb health
-eb open /polls/
+eb open
 ```
 
 The deployment hook applies migrations, creates example polls if absent, and
