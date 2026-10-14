@@ -30,15 +30,17 @@ To manage questions and choices through Django admin:
 python manage.py createsuperuser
 ```
 
-Then open http://127.0.0.1:8000/admin/. Admin credentials are created locally and
-are never committed. Online public voting does not require an account.
+Then open http://127.0.0.1:8000/admin/. Admin accounts belong to each environment's
+database; credentials are never committed. The admin login protects question and
+choice management. There is no public registration page, and public voting does
+not require an account.
 
 ## Tutorial coverage
 
 | Part | Implementation |
 | --- | --- |
 | 1 | Django project, polls application, views and URL routing |
-| 2 | Question/Choice models, migrations and Django admin registration |
+| 2 | Question/Choice models, migrations, admin registration and authenticated question/choice management |
 | 3 | Templates, question list/detail/results views and 404 responses |
 | 4 | CSRF-protected voting form, atomic vote increment, redirect after POST and generic views |
 
