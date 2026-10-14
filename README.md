@@ -4,7 +4,8 @@ Individual Software Engineering I assignment: the Django 5.2 polls application
 from tutorial parts 1–4, prepared for AWS Elastic Beanstalk.
 
 - Repository: https://github.com/jay-den-21/swe1-app
-- Public application URL: pending the first successful AWS deployment.
+- Public application: http://swe1-app-jayden.us-east-1.elasticbeanstalk.com/polls/
+- AWS environment: `swe1-app-env` in `us-east-1`, single `t3.micro` instance.
 
 ## Run locally
 
@@ -124,6 +125,13 @@ If deployment fails, inspect `eb logs` and `eb events`. Never commit credentials
 private keys, local databases or collected static files.
 
 ## Submission check
+
+Submit these two URLs to Brightspace:
+
+```text
+Application: http://swe1-app-jayden.us-east-1.elasticbeanstalk.com/polls/
+GitHub: https://github.com/jay-den-21/swe1-app
+```
 
 - Open the actual public `/polls/` URL in a signed-out browser.
 - Open a question, select an answer, vote, and verify the result count changes.
