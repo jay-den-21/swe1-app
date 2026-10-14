@@ -59,20 +59,29 @@ Use a **single-instance Python 3.12 / Amazon Linux 2023** environment. Install t
 EB CLI separately from application requirements:
 
 ```bash
-python -m pip install awsebcli
-aws sts get-caller-identity
-eb init swe1-app --platform "Python 3.12" --region us-east-1
+python -m pip install awsebcli 'botocore[crt]'
+aws login --profile swe1-app --region us-east-1
+aws sts get-caller-identity --profile swe1-app
+eb init swe1-app --platform "Python 3.12" --region us-east-1 --profile swe1-app
 ```
 
 The AWS identity needs permission to deploy Elastic Beanstalk and pass its service
 role and EC2 instance profile. Confirm these roles and a usable VPC exist before
 creating the environment. Use the intended personal AWS account.
 
+The course deployment configuration expects `swe1-app-eb-service-role` with
+`AWSElasticBeanstalkEnhancedHealth`, and the `swe1-app-eb-ec2-role` instance profile
+with `AWSElasticBeanstalkWebTier`. Managed platform updates are disabled, so no
+managed-update policy is required. AWS CLI browser sessions require the
+`botocore[crt]` extra for EB CLI credential refresh.
+
 For a first deployment, create a sample environment so its exact hostname is
 known before configuring Django:
 
 ```bash
-eb create swe1-app-env --single --sample --instance_type t3.micro
+eb create swe1-app-env --single --sample --instance_type t3.micro \
+  --service-role swe1-app-eb-service-role \
+  --instance_profile swe1-app-eb-ec2-role
 eb status
 ```
 
