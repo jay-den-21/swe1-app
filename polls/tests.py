@@ -19,7 +19,8 @@ class PollsViewTests(TestCase):
 
     def test_index_shows_published_questions_and_excludes_future_questions(self):
         future_question = Question.objects.create(
-            question_text="A future question", pub_date=timezone.now() + timedelta(days=1)
+            question_text="A future question",
+            pub_date=timezone.now() + timedelta(days=1),
         )
         response = self.client.get(reverse("polls:index"))
         self.assertContains(response, self.question.question_text)
@@ -43,7 +44,9 @@ class PollsViewTests(TestCase):
 
     def test_vote_increments_and_redirects_to_results(self):
         response = self.client.post(self.vote_url, {"choice": self.choice.pk})
-        self.assertRedirects(response, reverse("polls:results", args=[self.question.pk]))
+        self.assertRedirects(
+            response, reverse("polls:results", args=[self.question.pk])
+        )
         self.choice.refresh_from_db()
         self.assertEqual(self.choice.votes, 3)
         results = self.client.get(response.url)
@@ -80,7 +83,10 @@ class PollsViewTests(TestCase):
         client.get(reverse("polls:detail", args=[self.question.pk]))
         accepted = client.post(
             self.vote_url,
-            {"choice": self.choice.pk, "csrfmiddlewaretoken": client.cookies["csrftoken"].value},
+            {
+                "choice": self.choice.pk,
+                "csrfmiddlewaretoken": client.cookies["csrftoken"].value,
+            },
         )
         self.assertEqual(accepted.status_code, 302)
         self.choice.refresh_from_db()
@@ -101,6 +107,8 @@ class SeedPollsTests(TestCase):
 
         self.assertEqual(Question.objects.count(), 2)
         self.assertEqual(Choice.objects.count(), 8)
-        self.assertEqual(list(Question.objects.values_list("id", "pub_date")), question_dates)
+        self.assertEqual(
+            list(Question.objects.values_list("id", "pub_date")), question_dates
+        )
         choice.refresh_from_db()
         self.assertEqual(choice.votes, 7)

@@ -6,5 +6,10 @@
 .env
 .env.*
 staticfiles/
+.coverage
+.coverage.*
+coverage.xml
+htmlcov/
+.coveralls.yml
 .DS_Store
 .elasticbeanstalk/
