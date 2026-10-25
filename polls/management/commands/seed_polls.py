@@ -13,8 +13,14 @@ class Command(BaseCommand):
     @transaction.atomic
     def handle(self, *args, **options):
         examples = [
-            ("What's your favorite programming language?", ["Python", "Java", "JavaScript", "C++"]),
-            ("Which part of building a web app do you enjoy most?", ["Writing code", "Designing the interface", "Testing", "Deployment"]),
+            (
+                "What's your favorite programming language?",
+                ["Python", "Java", "JavaScript", "C++"],
+            ),
+            (
+                "Which part of building a web app do you enjoy most?",
+                ["Writing code", "Designing the interface", "Testing", "Deployment"],
+            ),
         ]
         created_questions = 0
         created_choices = 0

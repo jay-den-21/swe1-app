@@ -1,5 +1,8 @@
 # swe1-app
 
+[![Build Status](https://app.travis-ci.com/jay-den-21/swe1-app.svg?branch=main)](https://app.travis-ci.com/github/jay-den-21/swe1-app)
+[![Coverage Status](https://coveralls.io/repos/github/jay-den-21/swe1-app/badge.svg?branch=main)](https://coveralls.io/github/jay-den-21/swe1-app?branch=main)
+
 Individual Software Engineering I assignment: the Django 5.2 polls application
 from tutorial parts 1–4, prepared for AWS Elastic Beanstalk.
 
@@ -9,7 +12,8 @@ from tutorial parts 1–4, prepared for AWS Elastic Beanstalk.
 
 ## Run locally
 
-Use Python 3.12 (the same version as the intended Elastic Beanstalk platform).
+Use Python 3.12.6 or newer in the 3.12 series (matching the Elastic Beanstalk
+platform). Black does not support Python 3.12.5 because of a Python AST safety bug.
 
 ```bash
 python3.12 -m venv .venv
@@ -55,6 +59,47 @@ python manage.py makemigrations --check --dry-run
 Tests cover published questions, empty lists, detail pages, missing questions,
 valid/invalid votes, choices belonging to other questions, POST-only voting,
 CSRF protection and repeatable example data initialization.
+
+## Continuous integration
+
+Install the development tools and run the same checks used by Travis CI:
+
+```bash
+python -m pip install -r requirements-dev.txt
+python -m black --check .
+python -m flake8
+python manage.py check
+python manage.py makemigrations --check --dry-run
+python -m coverage run manage.py test --noinput
+python -m coverage report
+```
+
+To fix formatting, run `python -m black .`. Flake8 uses the same 88-character
+line length. Coverage measures `mysite` and `polls`, including branches, while
+excluding generated migrations and test code. There is no minimum coverage gate.
+
+`.travis.yml` runs these checks on pushes and pull requests and uploads coverage
+to Coveralls. Every command, including the upload, must succeed. Only a successful
+push build of this repository's `main` branch deploys to `swe1-app-env`; pull
+requests never deploy. The build waits for Elastic Beanstalk to finish updating.
+
+Enable this repository in Travis CI and Coveralls. In Travis repository settings,
+enable both push and pull-request builds, then configure:
+
+| Variable | Purpose |
+| --- | --- |
+| `AWS_ACCESS_KEY_ID` | Dedicated CI deployment identity; hide from build logs |
+| `AWS_SECRET_ACCESS_KEY` | Deployment secret; hide from build logs |
+| `EB_BUCKET` | Existing S3 deployment bucket in `us-east-1` |
+| `COVERALLS_REPO_TOKEN` | Only if required by Coveralls; hide from build logs |
+
+Keep credentials out of Git and do not share encrypted environment variables
+with fork pull requests. Formatting, lint and tests do not require AWS credentials.
+`COVERALLS_SERVICE_NAME=travis-pro` selects the Travis CI `.com` integration.
+
+After a PR build has appeared in GitHub, protect `main` with an active rule that
+requires the exact Travis PR check shown on that PR. Invite `slurpysalmon` as a
+collaborator with Write access for the course integration check.
 
 ## Elastic Beanstalk deployment
 
@@ -128,9 +173,11 @@ private keys, local databases or collected static files.
 
 ## Submission check
 
-Submit these two URLs to Brightspace:
+For the continuous integration assignment, submit these three URLs to Brightspace
+after verifying a real Travis build, coverage upload and automatic deployment:
 
 ```text
+Travis: https://app.travis-ci.com/github/jay-den-21/swe1-app
 Application: http://swe1-app-jayden.us-east-1.elasticbeanstalk.com/polls/
 GitHub: https://github.com/jay-den-21/swe1-app
 ```
@@ -138,7 +185,12 @@ GitHub: https://github.com/jay-den-21/swe1-app
 - Open the actual public `/polls/` URL in a signed-out browser.
 - Open a question, select an answer, vote, and verify the result count changes.
 - Confirm the GitHub repository is accessible to the course team.
-- Submit the tested application URL and repository URL to Brightspace.
+- Open a PR and confirm Travis starts automatically. Formatting or lint violations
+  must fail the build; fixing them must allow it to pass.
+- Confirm the required Travis PR check blocks merging until it passes.
+- Confirm Coveralls receives coverage and both README badges resolve.
+- Confirm the successful `main` build updates the EB application version.
+- Submit the tested Travis dashboard, application and repository URLs to Brightspace.
 - Keep the environment running until grading is complete. AWS resources can
   incur charges; terminate the environment only after it is no longer needed.
 
